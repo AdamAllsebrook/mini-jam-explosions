@@ -1,4 +1,4 @@
-  Object = require('lib.classic')
+Object = require('lib.classic')
 Anim = require('lib.anim')
 baton = require('lib.baton')
 bump = require('lib.bump')
@@ -27,7 +27,19 @@ function love.load()
         mid = love.graphics.newFont('ui/BitPotion.ttf', 32),
     }
 
-    unlocked = 1
+    sounds = {
+        click = love.audio.newSource('sfx/click.wav', 'static'),
+        die = love.sound.newSoundData('sfx/die.wav'),
+        explode = love.sound.newSoundData('sfx/explode.wav'),
+        finish = love.audio.newSource('sfx/finish.wav', 'static'),
+        grab = love.sound.newSoundData('sfx/grab.wav'),
+        jump = love.sound.newSoundData('sfx/jump.wav'),
+        switch = love.sound.newSoundData('sfx/switch.wav'),
+        throw = love.sound.newSoundData('sfx/throw.wav'),
+    }
+
+    unlocked = getUnlocked()
+    maxLevel = 18
 
     shaders = {
         greyscale = love.graphics.newShader([[
@@ -56,9 +68,10 @@ function love.load()
           right = {'key:right', 'key:d', 'axis:leftx+', 'button:dpright'},
           up = {'key:up', 'key:w', 'axis:lefty-', 'button:dpup'},
           down = {'key:down', 'key:s', 'axis:lefty+', 'button:dpdown'},
-          jump = {'key:x', 'button:a'},
-          grab = {'key:z', 'button:x'},
-          pause = {'key:escape', 'button:start'}
+          jump = {'key:x', 'key:space', 'button:a'},
+          grab = {'key:z', 'key:rshift', 'button:x', 'button:leftshoulder'},
+          pause = {'key:escape', 'button:start'},
+          restart = {'key:r', 'button:y'},
         },
         pairs = {
           move = {'left', 'right', 'up', 'down'}
@@ -73,7 +86,7 @@ function love.load()
     scale = scales[false]
     tileSize = 16
 
-    gamestate = Level(1)
+    gamestate = MainMenu()
 end
 
 function filter(item, other)
@@ -83,6 +96,16 @@ function filter(item, other)
         return 'bounce'
     else
         return 'cross'
+    end
+end
+
+function getUnlocked()
+    if love.filesystem.getInfo('level.txt') then
+        return tonumber(love.filesystem.read('level.txt'):sub(1, -1))
+    else
+        love.filesystem.newFile('level.txt')
+        love.filesystem.write('level.txt', '1')
+        return 1
     end
 end
 
@@ -96,4 +119,8 @@ function love.draw()
     love.graphics.print(love.timer.getFPS())
     love.graphics.scale(scale, scale)
     gamestate:draw()
+end
+
+function love.quit()
+    love.filesystem.write('level.txt', tostring(unlocked))
 end

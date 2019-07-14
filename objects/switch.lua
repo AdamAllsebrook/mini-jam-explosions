@@ -7,18 +7,21 @@ function Switch:new(pos)
     self.size = Vector(tileSize, tileSize)
     world:add(self, self.pos.x, self.pos.y, self.size.x, self.size.y)
     self.solid = true
-    self.switchRect = {pos=Vector(self.pos.x + 2, self.pos.y + self.size.y - 2), size=Vector(self.size.x - 4, 2), isSwitch=true, other=self}
+    self.switchRect = {pos=Vector(self.pos.x + 1, self.pos.y + self.size.y - 1), size=Vector(self.size.x - 2, 2), isSwitch=true, other=self}
     world:add(self.switchRect, self.switchRect.pos.x, self.switchRect.pos.y, self.switchRect.size.x, self.switchRect.size.y)
 
     self.images = {[0]=ss:getImage(0, 0), ss:getImage(1, 0)}
 
     self.timers = {}
+
+    self.sound = love.audio.newSource(sounds.switch, 'static')
 end
 
 function Switch:doSwitch(other)
     if not (self.timers[other] and self.timers[other] > 0) then
         level.switch = 1 - level.switch 
-        self.timers[other] = .1
+        self.timers[other] = .25
+        self.sound:play()
     end
 end
 

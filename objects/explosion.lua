@@ -6,10 +6,11 @@ local size = Vector(32, 32)
 function Explosion:new(pos)
     self.pos = pos
     self.size = size
-    self.anim = Anim(ss:getFrames(0, 0, 8), 12, function ()
+    self.anim = Anim(ss:getFrames(0, 0, 9), 12, function ()
         level:remove(self)
     end)
     self.exploded = false
+    love.audio.newSource(sounds.explode, 'static'):play()
 end
 
 function Explosion:update(dt)

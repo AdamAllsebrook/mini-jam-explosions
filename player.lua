@@ -14,7 +14,7 @@ function Player:new(pos)
 
     self.friction = .7
     self.minSpeed = 1
-    self.groundAccel = 400
+    self.groundAccel = 350
     self.maxGroundSpeed = 120
     self.opposeDirectionMult = 4
 
@@ -43,14 +43,22 @@ function Player:new(pos)
     }
     self.anim = self.anims.idle
     self.image = ss:getImage(0, 0)
+
+    self.sounds = {
+        die = love.audio.newSource(sounds.die, 'static'),
+        grab = love.audio.newSource(sounds.grab, 'static'),
+        jump = love.audio.newSource(sounds.jump, 'static'),
+        throw = love.audio.newSource(sounds.throw, 'static'),
+    }
 end
 
 --actions
 
-function Player:jump()
-    self.vel.y = self.jumpVel
+function Player:jump(mult)
+    self.vel.y = self.jumpVel * (mult or 1)
     self.isJumpHeld = true
     self.jumpHoldTimer = 0
+    self.sounds.jump:play()
 end
 
 function Player:drop()
@@ -59,10 +67,12 @@ end
 
 function Player:throw()
     self.heldItem.vel = Vector(self.throwVel.x * self.direction, self.throwVel.y)
+    self.sounds.throw:play()
 end
 
 function Player:throwUp()
     self.heldItem.vel = Vector(self.throwUpVel.x * self.direction, self.throwUpVel.y)
+    self.sounds.throw:play()
 end
 
 function Player:removeItem()
@@ -72,6 +82,7 @@ end
 
 function Player:explode()
     level.restart = true
+    self.sounds.die:play()
 end
 
 -- physics
@@ -140,8 +151,8 @@ function Player:update(dt)
         if math.abs(self.vel.x) < self.minSpeed then
             self.vel.x = 0
         end
-    else
-        if x == lume.sign(self.vel.x) then
+    elseif math.abs(x) > .5 then
+        if lume.round(x) == lume.sign(self.vel.x) then
             self.accel.x = x * self.groundAccel
         else
             self.accel.x = x * self.groundAccel * self.opposeDirectionMult
@@ -154,7 +165,7 @@ function Player:update(dt)
     if jumpable and self.vel.y > 0 and not self:isOnFloor() then
         jumpable:jumpedOn(self)
         if input:get('jump') then
-            self:jump()
+            self:jump(1.2)
         else
             self:jump()
             self.isJumpHeld = false
@@ -197,6 +208,8 @@ function Player:update(dt)
         end
         if cols[i].other.isSwitch then
             cols[i].other.other:doSwitch(self)
+        elseif cols[i].other.spiky then
+            self:explode()
         end
     end
     self.pos = Vector(actualX, actualY)
@@ -210,6 +223,7 @@ function Player:update(dt)
             self.heldItem = self:getGrabbable()
             if self.heldItem then
                 self.heldItem:pickUp(self:getGrabbablePos())
+                self.sounds.grab:play()
             end
         end
     elseif self.heldItem then
@@ -238,6 +252,11 @@ function Player:update(dt)
         end
     end
     self.anim:update(dt)
+
+    --death
+    if self.pos.x < -32 or self.pos.x > (level.size.x + 2) * tileSize or self.pos.y < -32 or self.pos.y > 224 then
+        self:explode()
+    end
 end
 
 function Player:draw()

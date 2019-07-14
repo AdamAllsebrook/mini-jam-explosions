@@ -8,8 +8,8 @@ function MainMenu:new()
     local size = self.buttonSize
     self.buttons = {
         --pos, size, text, func
-        Menu.Button(Vector(dims.x / 2 - size.x / 2, 70), size, 'START', function () gamestate = LevelSelect() end),
-        Menu.Button(Vector(dims.x / 2 - size.x / 2, 100), size, 'QUIT', love.event.quit),
+        Menu.Button(Vector(dims.x / 2 - size.x / 2, 90), size, 'START', function () gamestate = LevelSelect() end),
+        Menu.Button(Vector(dims.x / 2 - size.x / 2, 120), size, 'QUIT', love.event.quit),
         Menu.Button(Vector(dims.x / 2 - size.x - 10 - size.x / 2, dims.y - 30), size, self.getFullscreen(), self.toggleFullscreen),
         Menu.Button(Vector(dims.x / 2 - size.x / 2, dims.y - 30), size, 'sound ' .. self.getSound(), self.toggleSound),
         Menu.Button(Vector(dims.x / 2 + size.x + 10 - size.x / 2, dims.y - 30), size, 'music ' .. self.getMusic(), self.toggleMusic),

@@ -33,6 +33,7 @@ function Button:update(dt)
 		elseif self.down then
 			self.down = false
 			self.func()
+			sounds.click:play()
 		else
 			self.down = false
 			self.rollover = true

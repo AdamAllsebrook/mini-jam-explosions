@@ -10,6 +10,7 @@ local Switch = require('objects.switch')
 local SwitchBlock = require('objects.switch_block')
 local ExplosiveBlock = require('objects.explosive_block')
 local Gem = require('objects.gem')
+local Spikes = require('objects.spikes')
 
 local background = love.graphics.newImage('gfx/background.png')
 
@@ -35,6 +36,7 @@ function Level:new(num)
     level = level:gsub('\n', '')
     i = dims:find('x')
     dims = Vector(tonumber(dims:sub(1, i - 1)), tonumber(dims:sub(i + 1, -1)))
+    self.size = Vector(dims:unpack())
     local playerStart = Vector()
 
     self.objs = {}
@@ -70,6 +72,8 @@ function Level:new(num)
                 obj = ExplosiveBlock(Vector(x, y))
             elseif char == 'j' then
                 obj = Gem(Vector(x, y))
+            elseif char == 'k' then
+                obj = Spikes(Vector(x, y))
             end
             self:add(obj)
         end
@@ -79,7 +83,7 @@ function Level:new(num)
     self.switch = 1
     self.started = false
     local dims = Vector(love.graphics.getDimensions()) / scale
-    self.startText = Menu.Text('press jump to start', Vector(dims.x / 2, 50), fonts.mid, nil, true)
+    self.startText = Menu.Text('press jump to start', Vector(dims.x / 2, dims.y - 30), fonts.mid, nil, true)
 end
 
 function Level:add(obj)
@@ -97,13 +101,16 @@ function Level:update(dt)
             obj:update(dt)
         end
         self.player:update(dt)
-        if input:pressed('pause') then
-            gamestate = PauseMenu()
+        if input:pressed('restart') then
+            self.restart = true
         end
     else
         if input:released('jump') then
             self.started = true
         end
+    end
+    if input:pressed('pause') then
+        gamestate = PauseMenu()
     end
     if self.restart then
         gamestate = Level(self.num)
@@ -111,8 +118,13 @@ function Level:update(dt)
 end
 
 function Level:finish()
-    gamestate = LevelEnd()
-    unlocked = unlocked + 1
+    if unlocked < maxLevel then
+        gamestate = LevelEnd()
+        unlocked = unlocked + 1
+    else
+        gamestate = LevelSelect()
+    end
+    sounds.finish:play()
 end
 
 function Level:draw()
@@ -120,7 +132,7 @@ function Level:draw()
     love.graphics.push()
         love.graphics.draw(background, -50, -50)
         local dx = math.min(dims.x / 2 - self.player.pos.x, -16)
-        local dy = math.max(dims.y / 2 - self.player.pos.y, -16)
+        local dy = -16--math.max(dims.y / 2 - self.player.pos.y, -16)
         love.graphics.translate(dx, dy)
         for _, obj in ipairs(self.objs) do
             obj:draw()
@@ -128,7 +140,7 @@ function Level:draw()
         self.player:draw()
     love.graphics.pop()
     if not self.started then
-        love.graphics.setColor(0, 0, 0, .5)
+        love.graphics.setColor(0, 0, 0, .7)
         love.graphics.rectangle('fill', 0, 0, dims.x, dims.y)
         love.graphics.setColor(1, 1, 1)
         self.startText:draw()
