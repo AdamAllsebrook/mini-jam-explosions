@@ -26,7 +26,7 @@ function Player:new(pos)
     self.isJumpHeld = false
 
     self.heldItem = nil
-    self.handSize = Vector(7, 8)
+    self.handSize = Vector(7, 9)
     self.dropVel = Vector(250, 0)
     self.throwVel = Vector(350, -200)
     self.throwUpVel = Vector(0, -400)

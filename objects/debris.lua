@@ -8,6 +8,7 @@ function Debris:new(pos)
     self.anim = Anim(ss:getFrames(0, 0, 7), 12, function ()
         level:remove(self)
     end)
+    screenShake:start(.2, 1.5)
 end
 
 function Debris:update(dt)

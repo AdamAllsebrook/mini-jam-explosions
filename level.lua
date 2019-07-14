@@ -29,7 +29,9 @@ function Level:new(num)
         end
     end
     --]]
-    local str = require('levels/' .. pad(num, 3))
+    local req = require('levels/' .. pad(num, 3))
+    local str = req[1]
+    local texts = req[2] or {}
     local i = str:find('\n')
     local dims = str:sub(1, i - 1)
     local level = str:sub(i + 1, -1)
@@ -83,7 +85,10 @@ function Level:new(num)
     self.switch = 1
     self.started = false
     local dims = Vector(love.graphics.getDimensions()) / scale
-    self.startText = Menu.Text('press jump to start', Vector(dims.x / 2, dims.y - 30), fonts.mid, nil, true)
+    self.texts = {Menu.Text('press jump to start', Vector(dims.x / 2, dims.y - 30), fonts.mid, nil, true)}
+    for i, text in ipairs(texts) do
+        self.texts[i + 1] = Menu.Text(text, Vector(dims.x / 2, 30 + i * 20), fonts.mid, nil, true)
+    end
 end
 
 function Level:add(obj)
@@ -118,7 +123,7 @@ function Level:update(dt)
 end
 
 function Level:finish()
-    if unlocked < maxLevel then
+    if self.num < maxLevel then
         gamestate = LevelEnd()
         unlocked = unlocked + 1
     else
@@ -131,8 +136,9 @@ function Level:draw()
     local dims = Vector(love.graphics.getDimensions()) / scale
     love.graphics.push()
         love.graphics.draw(background, -50, -50)
-        local dx = math.min(dims.x / 2 - self.player.pos.x, -16)
-        local dy = -16--math.max(dims.y / 2 - self.player.pos.y, -16)
+        local sdx, sdy = screenShake:getShake()
+        local dx = math.min(dims.x / 2 - self.player.pos.x, -16) + sdx
+        local dy = -16 + sdy--math.max(dims.y / 2 - self.player.pos.y, -16)
         love.graphics.translate(dx, dy)
         for _, obj in ipairs(self.objs) do
             obj:draw()
@@ -140,10 +146,12 @@ function Level:draw()
         self.player:draw()
     love.graphics.pop()
     if not self.started then
-        love.graphics.setColor(0, 0, 0, .7)
+        love.graphics.setColor(0, 0, 0, .85)
         love.graphics.rectangle('fill', 0, 0, dims.x, dims.y)
         love.graphics.setColor(1, 1, 1)
-        self.startText:draw()
+        for _, text in ipairs(self.texts) do
+            text:draw()
+        end
     end
 end
 

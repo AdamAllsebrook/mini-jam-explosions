@@ -1,4 +1,4 @@
-return [[16x12
+return {[[16x12
 ..qqqqqq........
 ..q.............
 ..q.b...........
@@ -11,4 +11,9 @@ return [[16x12
 ....##q...qkkkkk
 ......qqqqqqqqqq
 ................
-]]
+]],
+{
+    'hold down and release z',
+    'to drop the bomb',
+}
+}

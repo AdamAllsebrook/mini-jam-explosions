@@ -19,11 +19,13 @@ function Menu.toggleFullscreen()
 end
 
 function Menu.toggleSound()
-    return
+    love.audio.setVolume(1 - love.audio.getVolume())
+    gamestate = gamestate.__index()
 end
 
 function Menu.toggleMusic()
-    return
+    music:setVolume(math.max(musicDefaultVol - music:getVolume(), 0))
+    gamestate = gamestate.__index()
 end
 
 function Menu.getFullscreen()

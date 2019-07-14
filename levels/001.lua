@@ -1,4 +1,4 @@
-return [[16x12
+return {[[16x12
 ................
 ................
 ................
@@ -11,4 +11,9 @@ a..........a...a
 #..........#...#
 s#.pb......q..jq
 ##w#qqw#qqqqw#qq
-]]
+]],
+{
+    'hold z to grab the bomb',
+    'release to throw',
+    'press space to jump'
+}}

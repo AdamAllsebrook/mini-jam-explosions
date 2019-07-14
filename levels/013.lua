@@ -1,4 +1,4 @@
-return [[18x13
+return {[[18x13
 ............uuuuu.
 ......gf..uuuqqqu.
 .........uju..bqu.
@@ -12,4 +12,4 @@ u.f....f.....ugqu.
 u...........qu.qu.
 up..........qqhqu.
 uuuuuuuuuuuuuuuuu.
-]]
+]]}

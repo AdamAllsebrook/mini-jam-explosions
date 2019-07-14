@@ -1,4 +1,4 @@
-return [[16x12
+return {[[16x12
 ................
 .........uuuuuuu
 .........u.....u
@@ -11,4 +11,4 @@ return [[16x12
 .p.....b.......u
 uuuukkkkkkkkkkku
 ...uuuuuuuuuuuuu
-]]
+]]}

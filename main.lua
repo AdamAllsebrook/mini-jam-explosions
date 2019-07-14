@@ -18,6 +18,7 @@ function love.load()
     Menu = require('ui.menu')
     MainMenu = require('ui.main_menu')
     LevelSelect = require('ui.level_select')
+    Credits = require('ui.credits')
     PauseMenu = require('ui.pause_menu')
     LevelEnd = require('ui.level_end')
     Level = require('level')
@@ -37,6 +38,11 @@ function love.load()
         switch = love.sound.newSoundData('sfx/switch.wav'),
         throw = love.sound.newSoundData('sfx/throw.wav'),
     }
+    music = love.audio.newSource('sfx/sky-man.mp3', 'stream')
+    musicDefaultVol = .8
+    music:setVolume(musicDefaultVol)
+    music:setLooping(true)
+    music:play()
 
     unlocked = getUnlocked()
     maxLevel = 18
@@ -111,6 +117,7 @@ end
 
 function love.update(dt)
     dt = math.min(dt, 1/30)
+    screenShake:update(dt)
     input:update()
     gamestate:update(dt)
 end

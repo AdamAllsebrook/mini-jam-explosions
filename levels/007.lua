@@ -1,4 +1,4 @@
-return [[24x12
+return {[[24x12
 ........................
 ......q......q..........
 ......l......l.......q..
@@ -11,4 +11,4 @@ qqqqqqq.qqqqqqqq.....q..
 kkkkkkkkkkkkkkkq.....q..
 qqqqqqqqqqqqqqqq...j.q..
 ................qqqqqqq.
-]]
+]]}

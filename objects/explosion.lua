@@ -11,6 +11,7 @@ function Explosion:new(pos)
     end)
     self.exploded = false
     love.audio.newSource(sounds.explode, 'static'):play()
+    screenShake:start(.2, 2)
 end
 
 function Explosion:update(dt)
